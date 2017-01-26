@@ -9,11 +9,32 @@ var fs = require("fs");
 var request = require("request");
 // For spotify.
 var spotify = require("spotify");
-// To grab the twitterKey object, write keys.twitterKey
-console.log(client);
 // For inputs on the command line in node.
 var operation = process.argv[2];
 var query = process.argv[3];
+
+liriGo(operation, query);
+
+function liriGo(command, subject){
+	switch(command){
+		case "do-what-it-says":
+			doWhatItSays();
+		break;
+
+		case "spotify-this-song":
+			spotifyThis(subject);
+		break;
+	};
+}
+
+
+function spotifyThis(){
+	console.log("music is rad.")
+	console.log("Requested: " + operation + " for " + query);
+	appendLog('\n-------------\n');
+	appendLog("Requested: " + operation + " for " + query);
+	appendLog('\n-------------\n');
+}
 
 // For "do-what-it-says"
 function doWhatItSays(){
@@ -24,17 +45,23 @@ function doWhatItSays(){
 		var dataArr = data.split(",");
 		operation = dataArr[0];
 		query = dataArr[1];
-	// This will log the 0 index of the array "spotify-this-song". 
-		console.log("Requested: " + operation + " and " + query);
+		liriGo(operation, query);
+	// Will log what was requested in both bash and the log.txt 
+		console.log("Requested: " + operation + " for " + query);
+		appendLog('\n-------------\n');
+		appendLog("Requested: " + operation + " for " + query);
+		appendLog('\n-------------\n');
 	});	
 }	
 
-doWhatItSays();
-
-// request('http://www.google.com', function (error, response, body) {
-//   if (!error && response.statusCode == 200) {
-//     console.log(body) // Show the HTML for the Google homepage. 
-//   }
-// })
-
+// When called at the end of other functions, this will update the log with what happened.
+function appendLog(data){
+	// Need to specify file, what arguement is going in, and if there is an error.
+	fs.appendFile("log.txt", data, function(error){
+		if (error){
+			// Need to use return to stop the code here.
+			return console.log(error);
+		}
+	})
+}
 
