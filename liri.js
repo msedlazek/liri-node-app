@@ -11,9 +11,9 @@ var request = require("request");
 var spotify = require("spotify");
 // For inputs on the command line in node.
 var operation = process.argv[2];
-var query = process.argv[3];
+var input = process.argv[3];
 
-liriGo(operation, query);
+liriGo(operation, input);
 
 function liriGo(command, subject){
 	switch(command){
@@ -29,11 +29,23 @@ function liriGo(command, subject){
 
 
 function spotifyThis(){
-	console.log("music is rad.")
-	console.log("Requested: " + operation + " for " + query);
+	var song = input;
+	if (song == undefined){
+		console.log("Please enter a song after request.");
+		return;
+	}
+
+	spotify.search({ type: 'track', query: song}, function(error, data) {
+	    if (error){
+	        console.log(error);
+	        return;
+	    }
+	    console.log(data.tracks.items[0].preview_url);
+	});
+	// Will log what was requested in both bash and the log.txt 
+	console.log("Requested: " + operation + " for " + input);
 	appendLog('\n-------------\n');
-	appendLog("Requested: " + operation + " for " + query);
-	appendLog('\n-------------\n');
+	appendLog("Requested: " + operation + " for " + input);
 }
 
 // For "do-what-it-says"
@@ -44,13 +56,8 @@ function doWhatItSays(){
 	// This will split the data into an array.
 		var dataArr = data.split(",");
 		operation = dataArr[0];
-		query = dataArr[1];
-		liriGo(operation, query);
-	// Will log what was requested in both bash and the log.txt 
-		console.log("Requested: " + operation + " for " + query);
-		appendLog('\n-------------\n');
-		appendLog("Requested: " + operation + " for " + query);
-		appendLog('\n-------------\n');
+		input = dataArr[1];
+		liriGo(operation, input);
 	});	
 }	
 
