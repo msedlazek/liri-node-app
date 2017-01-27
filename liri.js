@@ -24,8 +24,23 @@ function liriGo(command, subject){
 		case "spotify-this-song":
 			spotifyThis(subject);
 		break;
+
+		case "my-tweets":
+			showTweets();
+		break;
 	};
-}
+};
+
+function showTweets(){
+	var params = {screen_name: 'KoiTiger'};
+	client.get('statuses/user_timeline', params, function(error, tweets, response) {
+  		if (!error) {
+  			for(var i=0; i<20; i++)
+  				console.log("Tweet " + (i+1) + ": " + tweets[i].text + " Created at: " + tweets[i].created_at);
+  				appendLog("\nTweet " + (i+1) + ": " + tweets[i].text + " Created at: " + tweets[i].created_at);
+  		};
+	});
+};
 
 
 function spotifyThis(){
@@ -40,19 +55,24 @@ function spotifyThis(){
 	        console.log(error);
 	        return;
 	    }
-	    console.log(data.tracks.items[0].preview_url);
+	    console.log("This track's Artist: " + data.tracks.items[0].artists[0].name);
+	    console.log("This track's Title: " + data.tracks.items[0].name);
+	    console.log("You can hear a preview at: " + data.tracks.items[0].preview_url);
+	    console.log("The Album this track appears on: " + data.tracks.items[0].album.name);
+
+	    console.log("Requested: " + operation + " for " + input);
+		appendLog('\n-------------\n');
+		appendLog("\nRequested: " + operation + " for " + input);
+		appendLog("\nThis track's Artist: " + data.tracks.items[0].artists[0].name);
+		appendLog("\nThis track's Title: " + data.tracks.items[0].name);
+		appendLog("\nYou can hear a preview at: " + data.tracks.items[0].preview_url);
+		appendLog("\nThe Album this track appears on: " + data.tracks.items[0].album.name);
 	});
-	// Will log what was requested in both bash and the log.txt 
-	console.log("Requested: " + operation + " for " + input);
-	appendLog('\n-------------\n');
-	appendLog("Requested: " + operation + " for " + input);
 }
 
 // For "do-what-it-says"
 function doWhatItSays(){
 	fs.readFile("random.txt", "utf8", function(error, data){
-	// for the random.txt to spotify the song.
-		console.log(data);
 	// This will split the data into an array.
 		var dataArr = data.split(",");
 		operation = dataArr[0];
